@@ -33,19 +33,38 @@ void enableRawMode() {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &term);
 }
 
-void Read(input){
-        read(0, input, 1);
+// void Read(input){
+//         read(0, input, 1);
+// }
+void refreshTarget(char *target,char *input){
+    for(int i = 0; i < (sizeof(input) / sizeof(input[0])); i++){
+        if(target[i] == input[i]){
+            // green
+            printf("\032[7m%c\033[0m", target[i]); 
+        }
+        if(target[i] == input[i]){
+            //red
+            printf("\033[7m%c\033[0m", target[i]); 
+        }
+    }
 }
 
 int main(){
-    enableRawMode();
     int val = rand() % (7);
     char *target = text_sample[val];
     char *input = malloc(sizeof(char));
+    system("clear");
     printf("\033[7m%s\033[0m", target);
     printf("\e[?1049h\e[50C");
-    read(0, input, 1);
-    printf("%c\n", *input);
+    enableRawMode();
+    while(true){
+        scanf("%s", input);
+        refreshTarget(target, input);
+        if(input == target){
+            break;
+        }
+
+    }
     disableRawMode();
     return 0;
 
