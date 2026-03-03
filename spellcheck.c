@@ -36,8 +36,8 @@ void enableRawMode() {
 // void Read(input){
 //         read(0, input, 1);
 // }
-void refreshTarget(char *target,char *input){
-    for(int i = 0; i < (sizeof(input) / sizeof(input[0])); i++){
+void refreshTarget(char *target,char *input, int length){
+    for(int i = 0; i < length; i++){
         if(target[i] == input[i]){
             // green
             printf("\032[7m%c\033[0m", target[i]); 
@@ -50,22 +50,24 @@ void refreshTarget(char *target,char *input){
 }
 
 int main(){
+    srand(time(NULL));
     int val = rand() % (7);
     char *target = text_sample[val];
-    char *input = malloc(sizeof(char));
+    int length = strlen(target);
+    char *input = malloc(length + 1);
     system("clear");
     printf("\033[7m%s\033[0m", target);
     printf("\e[?1049h\e[50C");
-    enableRawMode();
+    // enableRawMode();
     while(true){
-        scanf("%s", input);
-        refreshTarget(target, input);
-        if(input == target){
+        read(0, input, 1);
+        refreshTarget(target, input, length);
+        if(strcmp(input, target)){
             break;
         }
 
     }
-    disableRawMode();
+    // disableRawMode();
     return 0;
 
 
