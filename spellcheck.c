@@ -6,6 +6,9 @@
 #include <termios.h>
 #include <string.h>
 
+#define ENABLE_BUFFER_MODE printf("\e[?1049h");
+#define DISABLE_BUFFER_MODE printf("\e[?1049l");
+
     char *text_sample[] = {
         "The sun set behind the mountains, casting a golden hue across the valley\0",
         "As the rain fell softly, the sound created a soothing melody in the quiet room\0",
@@ -18,7 +21,7 @@
 
 
 // function to disable canonical mode and echo
-void disableRawMode() {
+void enableRawMode() {
     struct termios term;
     tcgetattr(STDIN_FILENO, &term);
     term.c_lflag &= ~(ICANON | ECHO);
@@ -26,7 +29,7 @@ void disableRawMode() {
 }
 
 // function to enable canonical mode and echo
-void enableRawMode() {
+void disableRawMode() {
     struct termios term;
     tcgetattr(STDIN_FILENO, &term);
     term.c_lflag |= (ICANON | ECHO);
@@ -49,25 +52,30 @@ void refreshTarget(char *target,char *input, int length){
     }
 }
 
+
+
 int main(){
     srand(time(NULL));
-    int val = rand() % (7);
+    int val = rand() % 6;
     char *target = text_sample[val];
     int length = strlen(target);
-    char *input = malloc(length + 1);
-    system("clear");
-    printf("\033[7m%s\033[0m", target);
-    printf("\e[?1049h\e[50C");
-    // enableRawMode();
-    while(true){
-        read(0, input, 1);
-        refreshTarget(target, input, length);
-        if(strcmp(input, target)){
-            break;
-        }
+    char *input = malloc(1);
 
+    enableRawMode();
+    ENABLE_BUFFER_MODE
+
+    printf("%s", target);
+    printf("\e[0;0H");
+    scanf("%c", input);
+    // read(STDIN_FILENO, input, 1);
+    while(true){
+        scanf("%c", input);
+        
     }
-    // disableRawMode();
+
+    DISABLE_BUFFER_MODE
+    disableRawMode();
+
     return 0;
 
 
