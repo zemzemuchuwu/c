@@ -79,8 +79,8 @@ void drawTop(Buf* buf){
     append (buf, name, 10);
     i += 10;
 
-    buf->buf = (char*)realloc(buf->buf, ((w.ws_col/2) -5));
     buf->len += (w.ws_col/2) - 5;
+    buf->buf = (char*)realloc(buf->buf, buf->len);
     for(; i < ((w.ws_col)); i++){
         buf->buf[i] = ' ';
         
@@ -122,7 +122,7 @@ void refreshTarget(char *target, char *input, int x, int y, bool *init){
 
     struct buf buf = {0, 0};
     drawTop(&buf);
-    // drawBody(&buf, target);
+    drawBody(&buf, target);
     // if(init == false){
     //     printf("\e[1;2H");
     // }
@@ -146,7 +146,6 @@ int main(){
     srand(time(NULL));
     int val = rand() % 6;
     char *target = text_sample[val];
-    int length = strlen(target);
     char *input = malloc(1);
     bool init = false;
 
